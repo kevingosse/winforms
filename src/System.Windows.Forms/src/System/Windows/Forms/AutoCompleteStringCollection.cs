@@ -7,8 +7,8 @@ namespace System.Windows.Forms {
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Collections;
-    using System.Security.Permissions;
     using System.ComponentModel;
+    using System.Security.Permissions;
 
     /// <include file='doc\AutoCompleteStringCollection.uex' path='docs/doc[@for="AutoCompleteStringCollection"]/*' />
     /// <devdoc>

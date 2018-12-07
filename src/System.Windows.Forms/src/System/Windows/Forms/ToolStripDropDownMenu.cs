@@ -14,8 +14,6 @@ namespace System.Windows.Forms {
     using System.Windows.Forms.Layout;
     using System.Reflection;
     using System.Runtime.InteropServices;
-    using System.Security;
-    using System.Security.Permissions;    
     using System.Windows.Forms.Internal;
     using System.Collections.Specialized;
     using System.Diagnostics.CodeAnalysis;

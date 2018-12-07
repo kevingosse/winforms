@@ -32,8 +32,6 @@ namespace System.Resources {
     ///     for the value of the resource item, the external resource is loaded.
     /// </devdoc>
     [TypeConverterAttribute(typeof(ResXFileRef.Converter)), Serializable]
-    [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Name="FullTrust")]
-    [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name="FullTrust")]
 #if SYSTEM_WEB
     internal class ResXFileRef {
 #else
@@ -191,8 +189,6 @@ namespace System.Resources {
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Name="FullTrust")]
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name="FullTrust")]
         public class Converter : TypeConverter {
             /// <include file='doc\ResXFileRef.uex' path='docs/doc[@for="ResXFileRef.Converter.CanConvertFrom"]/*' />
             /// <devdoc>

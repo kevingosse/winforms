@@ -8,8 +8,6 @@ namespace System.Windows.Forms {
     using System.Windows.Forms;
     using System.ComponentModel;
     using System.Drawing;
-    using System.Security;
-    using System.Security.Permissions;
 
     /// <include file='doc\ToolStripProgressBar.uex' path='docs/doc[@for="ToolStripProgressBar"]/*' />
     [DefaultProperty(nameof(Value))]

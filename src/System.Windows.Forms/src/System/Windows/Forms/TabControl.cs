@@ -20,8 +20,6 @@ namespace System.Windows.Forms {
     using System.Runtime.InteropServices;
     using System.Runtime.Remoting;
     using System.Runtime.Serialization.Formatters;
-    using System.Security;
-    using System.Security.Permissions;
     using System.Windows.Forms.Layout;
     using System.Globalization;
 
@@ -335,7 +333,6 @@ namespace System.Windows.Forms {
         /// </devdoc>
         /// <internalonly/>
         protected override CreateParams CreateParams {
-            [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
             get {
                 CreateParams cp = base.CreateParams;
                 cp.ClassName = NativeMethods.WC_TABCONTROL;
@@ -1607,9 +1604,6 @@ namespace System.Windows.Forms {
         ///     We override this to get the Ctrl and Ctrl-Shift Tab functionality.
         /// </devdoc>
         /// <internalonly/>
-        [
-            SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)
-        ]
         protected override bool ProcessKeyPreview(ref Message m) {
             if (ProcessKeyEventArgs(ref m)) return true;
             return base.ProcessKeyPreview(ref m);
@@ -1928,17 +1922,7 @@ namespace System.Windows.Forms {
                     if (updateFocus) {
                         if (!Focused || tabControlState[TABCONTROLSTATE_selectFirstControl]) {
                             tabControlState[TABCONTROLSTATE_UISelection] = false;
-                            bool selectNext = false;
-                            // 
-
-
-                            IntSecurity.ModifyFocus.Assert();
-                            try {
-                                selectNext = tabPages[index].SelectNextControl(null, true, true, false, false);
-                            }
-                            finally {
-                                CodeAccessPermission.RevertAssert();
-                            }
+                            bool selectNext = tabPages[index].SelectNextControl(null, true, true, false, false);
 
                             if (selectNext) {
                                 if (!ContainsFocus) {
@@ -1961,16 +1945,7 @@ namespace System.Windows.Forms {
                                         ((ContainerControl)c).SetActiveControlInternal(this);
                                     }
                                     else {
-                                        // 
-
-
-                                        IntSecurity.ModifyFocus.Assert();
-                                        try {
-                                            c.ActiveControl = this;
-                                        }
-                                        finally {
-                                            CodeAccessPermission.RevertAssert();
-                                        }
+                                        c.ActiveControl = this;
                                     }
                                 }
                             }
@@ -2088,16 +2063,7 @@ namespace System.Windows.Forms {
                     ((ContainerControl)c).SetActiveControlInternal(this);
                 }
                 else {
-                    // 
-
-
-                    IntSecurity.ModifyFocus.Assert();
-                    try {
-                        c.ActiveControl = this;
-                    }
-                    finally {
-                        CodeAccessPermission.RevertAssert();
-                    }
+                    c.ActiveControl = this;
                 }
             }
             // Fire DeSelecting .... on the current Selected Index...
@@ -2143,7 +2109,6 @@ namespace System.Windows.Forms {
         ///     base.wndProc(m); to ensure the tab continues to function properly.
         /// </devdoc>
         /// <internalonly/>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         protected override void WndProc(ref Message m) {
 
             switch (m.Msg) {

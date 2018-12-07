@@ -13,7 +13,6 @@ namespace System.Windows.Forms.Layout {
     using System.Drawing;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
-    using System.Security.Permissions;
 
     /// <include file='doc\LayoutEngine.uex' path='docs/doc[@for="LayoutEngine"]/*' />
     public abstract class LayoutEngine {        

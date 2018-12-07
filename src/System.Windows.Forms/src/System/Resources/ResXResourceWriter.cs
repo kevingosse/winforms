@@ -31,8 +31,6 @@ namespace System.Resources {
     ///     ResX resource writer. See the text in "ResourceSchema" for more 
     ///     information.
     /// </devdoc>
-    [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Name="FullTrust")]
-    [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name="FullTrust")]
 #if SYSTEM_WEB
     internal class ResXResourceWriter : IResourceWriter {
 #else

@@ -18,8 +18,6 @@ namespace System.Windows.Forms
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters;
     using System.Runtime.Serialization.Formatters.Binary;
-    using System.Security;
-    using System.Security.Permissions;
     using System.Text;
     using IComDataObject = System.Runtime.InteropServices.ComTypes.IDataObject;
 
@@ -676,7 +674,6 @@ namespace System.Windows.Forms
         // <internalonly/>
         /// <include file='doc\DataObject.uex' path='docs/doc[@for="DataObject.IComDataObject.DAdvise"]/*' />
         /// <internalonly/>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         int IComDataObject.DAdvise(ref FORMATETC pFormatetc, ADVF advf, IAdviseSink pAdvSink, out int pdwConnection)
         {
             Debug.WriteLineIf(CompModSwitches.DataObject.TraceVerbose, "DAdvise");
@@ -694,7 +691,6 @@ namespace System.Windows.Forms
         // <internalonly/>
         /// <include file='doc\DataObject.uex' path='docs/doc[@for="DataObject.IComDataObject.DUnadvise"]/*' />
         /// <internalonly/>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         void IComDataObject.DUnadvise(int dwConnection)
         {
             Debug.WriteLineIf(CompModSwitches.DataObject.TraceVerbose, "DUnadvise");
@@ -712,7 +708,6 @@ namespace System.Windows.Forms
         // <internalonly/>
         /// <include file='doc\DataObject.uex' path='docs/doc[@for="DataObject.IComDataObject.EnumDAdvise"]/*' />
         /// <internalonly/>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         int IComDataObject.EnumDAdvise(out IEnumSTATDATA enumAdvise)
         {
             Debug.WriteLineIf(CompModSwitches.DataObject.TraceVerbose, "EnumDAdvise");
@@ -730,7 +725,6 @@ namespace System.Windows.Forms
         // <internalonly/>
         /// <include file='doc\DataObject.uex' path='docs/doc[@for="DataObject.IComDataObject.EnumFormatEtc"]/*' />
         /// <internalonly/>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         IEnumFORMATETC IComDataObject.EnumFormatEtc(DATADIR dwDirection)
         {
             Debug.WriteLineIf(CompModSwitches.DataObject.TraceVerbose, "EnumFormatEtc: " + dwDirection.ToString());
@@ -754,7 +748,6 @@ namespace System.Windows.Forms
         // <internalonly/>
         /// <include file='doc\DataObject.uex' path='docs/doc[@for="DataObject.IComDataObject.GetCanonicalFormatEtc"]/*' />
         /// <internalonly/>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         int IComDataObject.GetCanonicalFormatEtc(ref FORMATETC pformatetcIn, out FORMATETC pformatetcOut)
         {
             Debug.WriteLineIf(CompModSwitches.DataObject.TraceVerbose, "GetCanonicalFormatEtc");
@@ -772,7 +765,6 @@ namespace System.Windows.Forms
         // <internalonly/>
         /// <include file='doc\DataObject.uex' path='docs/doc[@for="DataObject.IComDataObject.GetData"]/*' />
         /// <internalonly/>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         void IComDataObject.GetData(ref FORMATETC formatetc, out STGMEDIUM medium)
         {
             Debug.WriteLineIf(CompModSwitches.DataObject.TraceVerbose, "GetData");
@@ -827,7 +819,6 @@ namespace System.Windows.Forms
         // <internalonly/>
         /// <include file='doc\DataObject.uex' path='docs/doc[@for="DataObject.IComDataObject.GetDataHere"]/*' />
         /// <internalonly/>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         void IComDataObject.GetDataHere(ref FORMATETC formatetc, ref STGMEDIUM medium)
         {
             Debug.WriteLineIf(CompModSwitches.DataObject.TraceVerbose, "GetDataHere");
@@ -847,7 +838,6 @@ namespace System.Windows.Forms
         // <internalonly/>
         /// <include file='doc\DataObject.uex' path='docs/doc[@for="DataObject.IComDataObject.QueryGetData"]/*' />
         /// <internalonly/>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         int IComDataObject.QueryGetData(ref FORMATETC formatetc)
         {
             Debug.WriteLineIf(CompModSwitches.DataObject.TraceVerbose, "QueryGetData");
@@ -895,7 +885,6 @@ namespace System.Windows.Forms
         // <internalonly/>
         /// <include file='doc\DataObject.uex' path='docs/doc[@for="DataObject.IComDataObject.SetData"]/*' />
         /// <internalonly/>
-        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         void IComDataObject.SetData(ref FORMATETC pFormatetcIn, ref STGMEDIUM pmedium, bool fRelease)
         {
 
@@ -996,9 +985,6 @@ namespace System.Windows.Forms
             return SaveStreamToHandle(ref handle, stream);
         }
 
-        [
-            SecurityPermissionAttribute(SecurityAction.Assert, Flags = SecurityPermissionFlag.SerializationFormatter)
-        ]
         private static void SaveObjectToHandleSerializer(Stream stream, object data, bool restrictSerialization)
         {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -1344,7 +1330,7 @@ namespace System.Windows.Forms
                     {
                         if (!Clipboard.IsFormatValid(formats))
                         {
-                            throw new SecurityException(SR.ClipboardSecurityException);
+                            throw new System.Security.SecurityException(SR.ClipboardSecurityException);
                         }
                     }
 
@@ -1378,7 +1364,7 @@ namespace System.Windows.Forms
                     {
                         if (!Clipboard.IsFormatValid(formats))
                         {
-                            throw new SecurityException(SR.ClipboardSecurityException);
+                            throw new System.Security.SecurityException(SR.ClipboardSecurityException);
                         }
                     }
 
@@ -1535,15 +1521,7 @@ namespace System.Windows.Forms
 
                 try
                 {
-                    IntSecurity.UnmanagedCode.Assert();
-                    try
-                    {
-                        innerData.GetData(ref formatetc, out medium);
-                    }
-                    finally
-                    {
-                        CodeAccessPermission.RevertAssert();
-                    }
+                    innerData.GetData(ref formatetc, out medium);
                 }
                 catch
                 {
@@ -1653,15 +1631,7 @@ namespace System.Windows.Forms
                 {
                     try
                     {
-                        IntSecurity.UnmanagedCode.Assert();
-                        try
-                        {
-                            innerData.GetData(ref formatetc, out medium);
-                        }
-                        finally
-                        {
-                            CodeAccessPermission.RevertAssert();
-                        }
+                        innerData.GetData(ref formatetc, out medium);
 
                         if (medium.unionmember != IntPtr.Zero)
                         {
@@ -1720,15 +1690,7 @@ namespace System.Windows.Forms
                 {
                     try
                     {
-                        IntSecurity.UnmanagedCode.Assert();
-                        try
-                        {
-                            innerData.GetData(ref formatetc, out medium);
-                        }
-                        finally
-                        {
-                            CodeAccessPermission.RevertAssert();
-                        }
+                        innerData.GetData(ref formatetc, out medium);
                     }
                     catch
                     {
@@ -1750,16 +1712,7 @@ namespace System.Windows.Forms
                         //This bitmap is created by the com object which originally copied the bitmap to tbe 
                         //clipboard. We call Add here, since DeleteObject calls Remove.
                         System.Internal.HandleCollector.Add(medium.unionmember, NativeMethods.CommonHandles.GDI);
-                        Image clipboardImage = null;
-                        IntSecurity.ObjectFromWin32Handle.Assert();
-                        try
-                        {
-                            clipboardImage = Image.FromHbitmap(medium.unionmember);
-                        }
-                        finally
-                        {
-                            CodeAccessPermission.RevertAssert();
-                        }
+                        Image clipboardImage = Image.FromHbitmap(medium.unionmember);
                         if (clipboardImage != null)
                         {
                             Image firstImage = clipboardImage;
@@ -1925,8 +1878,6 @@ namespace System.Windows.Forms
                             continue;
                         string s = sb.ToString(0, charlen);
                         string fullPath = Path.GetFullPath(s);
-                        Debug.WriteLineIf(IntSecurity.SecurityDemand.TraceVerbose, "FileIO(" + fullPath + ") Demanded");
-                        new FileIOPermission(FileIOPermissionAccess.PathDiscovery, fullPath).Demand();
                         files[i] = s;
                     }
                 }
@@ -2060,7 +2011,6 @@ namespace System.Windows.Forms
                 }
             }
 
-            [SecurityPermission(SecurityAction.Assert, UnmanagedCode = true)]
             private int QueryGetDataUnsafe(ref FORMATETC formatetc)
             {
                 return innerData.QueryGetData(ref formatetc);
@@ -2095,18 +2045,7 @@ namespace System.Windows.Forms
 
             public virtual bool GetDataPresent(string format, bool autoConvert)
             {
-                IntSecurity.ClipboardRead.Demand();
-                bool baseVar = false;
-
-                IntSecurity.UnmanagedCode.Assert();
-                try
-                {
-                    baseVar = GetDataPresentInner(format);
-                }
-                finally
-                {
-                    CodeAccessPermission.RevertAssert();
-                }
+                bool baseVar = GetDataPresentInner(format);
 
                 if (!baseVar && autoConvert)
                 {
@@ -2117,15 +2056,7 @@ namespace System.Windows.Forms
                         {
                             if (!format.Equals(mappedFormats[i]))
                             {
-                                IntSecurity.UnmanagedCode.Assert();
-                                try
-                                {
-                                    baseVar = GetDataPresentInner(mappedFormats[i]);
-                                }
-                                finally
-                                {
-                                    CodeAccessPermission.RevertAssert();
-                                }
+                                baseVar = GetDataPresentInner(mappedFormats[i]);
                                 if (baseVar)
                                 {
                                     break;

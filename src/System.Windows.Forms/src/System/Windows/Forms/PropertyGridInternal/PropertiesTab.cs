@@ -19,8 +19,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
     /// </devdoc>
-    [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Name="FullTrust")]
-    [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name="FullTrust")]
     public class PropertiesTab : PropertyTab {
 
 

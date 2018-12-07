@@ -6,7 +6,6 @@ namespace System.Windows.Forms {
     using System.Runtime.InteropServices;
     using System.Diagnostics;
     using System;
-    using System.Security.Permissions;
     using System.Runtime.Serialization.Formatters;
     using System.ComponentModel;
     using System.Drawing;

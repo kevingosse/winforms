@@ -10,7 +10,6 @@ namespace System.Windows.Forms {
     using System.ComponentModel;
     using System.Diagnostics;
     using System;
-    using System.Security.Permissions;
     using System.Drawing;
     using System.Collections;
     using Microsoft.Win32;
@@ -213,7 +212,6 @@ namespace System.Windows.Forms {
         ///    </para>
         /// </devdoc>
         protected override CreateParams CreateParams {
-            [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
             get {
                 CreateParams cp = base.CreateParams;
                 cp.ClassName = NativeMethods.WC_STATUSBAR;
@@ -1155,7 +1153,6 @@ namespace System.Windows.Forms {
         ///       for any messages that they don't handle.
         ///    </para>
         /// </devdoc>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         protected override void WndProc(ref Message m) {
             switch (m.Msg) {
                 case NativeMethods.WM_NCHITTEST:
@@ -1641,7 +1638,6 @@ namespace System.Windows.Forms {
         ///     this control binds to rectangular regions, instead of
         ///     full controls.
         /// </devdoc>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         private class ControlToolTip {
 
             /// <include file='doc\StatusBar.uex' path='docs/doc[@for="Tool"]/*' />

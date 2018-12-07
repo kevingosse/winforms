@@ -12,8 +12,6 @@ namespace System.Windows.Forms {
     using System.Diagnostics.CodeAnalysis;
 
     using System;
-    using System.Security;
-    using System.Security.Permissions;
     using System.Globalization;
     using System.Windows.Forms.Layout;
 
@@ -327,7 +325,6 @@ namespace System.Windows.Forms {
         /// </devdoc>
         /// <internalonly/>
         protected override CreateParams CreateParams {
-            [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
             get {
                 CreateParams cp = base.CreateParams;
                 cp.ClassName = "LISTBOX";
@@ -2271,19 +2268,13 @@ namespace System.Windows.Forms {
         private void WmPrint(ref Message m) {
             base.WndProc(ref m);
             if ((NativeMethods.PRF_NONCLIENT & (int)m.LParam) != 0 && Application.RenderWithVisualStyles && this.BorderStyle == BorderStyle.Fixed3D) {
-                IntSecurity.UnmanagedCode.Assert();
-                try {
-                    using (Graphics g = Graphics.FromHdc(m.WParam)) {
-                        Rectangle rect = new Rectangle(0, 0, this.Size.Width - 1, this.Size.Height - 1);
-                        using (Pen pen = new Pen(VisualStyleInformation.TextControlBorder)) {
-                            g.DrawRectangle(pen, rect);
-                        }
-                        rect.Inflate(-1, -1);
-                        g.DrawRectangle(SystemPens.Window, rect);
+                using (Graphics g = Graphics.FromHdc(m.WParam)) {
+                    Rectangle rect = new Rectangle(0, 0, this.Size.Width - 1, this.Size.Height - 1);
+                    using (Pen pen = new Pen(VisualStyleInformation.TextControlBorder)) {
+                        g.DrawRectangle(pen, rect);
                     }
-                }
-                finally {
-                    CodeAccessPermission.RevertAssert();
+                    rect.Inflate(-1, -1);
+                    g.DrawRectangle(SystemPens.Window, rect);
                 }
             }
         }
@@ -2292,10 +2283,6 @@ namespace System.Windows.Forms {
         /// <devdoc>
         /// </devdoc>
         /// <internalonly/>
-        [
-        System.Security.Permissions.SecurityPermissionAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Flags=System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode),
-        System.Security.Permissions.SecurityPermissionAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Flags=System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode)
-        ]
         protected virtual void WmReflectCommand(ref Message m) {
             switch (NativeMethods.Util.HIWORD(m.WParam)) {
                 case NativeMethods.LBN_SELCHANGE:
@@ -2382,7 +2369,6 @@ namespace System.Windows.Forms {
         ///     to add extra functionality, but should not forget to call
         ///     base.wndProc(m); to ensure the list continues to function properly.
         /// </devdoc>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         protected override void WndProc(ref Message m) {
             switch (m.Msg) {
                 case NativeMethods.WM_REFLECT + NativeMethods.WM_COMMAND:

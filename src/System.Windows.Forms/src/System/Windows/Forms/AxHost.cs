@@ -24,8 +24,6 @@ namespace System.Windows.Forms {
     using System.Runtime.Remoting;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Runtime.Serialization;
-    using System.Security;
-    using System.Security.Permissions;
     using System.Threading;
     using System.Windows.Forms.ComponentModel;
     using System.Windows.Forms.ComponentModel.Com2Interop;
@@ -47,8 +45,6 @@ namespace System.Windows.Forms {
     DesignTimeVisible(false),
     DefaultEvent(nameof(Enter)),
     Designer("System.Windows.Forms.Design.AxHostDesigner, " + AssemblyRef.SystemDesign),
-    PermissionSet(SecurityAction.LinkDemand, Name="FullTrust"),
-    PermissionSet(SecurityAction.InheritanceDemand, Name="FullTrust")
     ]
     public abstract class AxHost : Control, ISupportInitialize, ICustomTypeDescriptor {
 
@@ -277,7 +273,6 @@ namespace System.Windows.Forms {
         ///    <para>Creates a new instance of a control which wraps an activeX control given by the
         ///       clsid and flags parameters.</para>
         /// </devdoc>
-        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         protected AxHost(string clsid, int flags) : base() {
             if (Application.OleRequired() != ApartmentState.STA) {
                 throw new ThreadStateException(string.Format(SR.AXMTAThread, clsid));
@@ -1978,7 +1973,6 @@ namespace System.Windows.Forms {
         ///     pre-processing of a character includes checking whether the character
         ///     is a mnemonic of another control.
         /// </devdoc>
-        [UIPermission(SecurityAction.InheritanceDemand, Window=UIPermissionWindow.AllWindows)]
         protected override bool IsInputChar(char charCode) {
             return true;
         }
@@ -1988,7 +1982,6 @@ namespace System.Windows.Forms {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         [SuppressMessage("Microsoft.Security", "CA2114:MethodSecurityShouldBeASupersetOfType")]
-        [UIPermission(SecurityAction.LinkDemand, Window=UIPermissionWindow.AllWindows)]
         protected override bool ProcessDialogKey(Keys keyData) 
         {
             return ignoreDialogKeys ? false : base.ProcessDialogKey(keyData);
@@ -2092,7 +2085,6 @@ namespace System.Windows.Forms {
         ///     to the ActiveX control.
         /// </devdoc>
         [SuppressMessage("Microsoft.Security", "CA2114:MethodSecurityShouldBeASupersetOfType")]
-        [UIPermission(SecurityAction.LinkDemand, Window=UIPermissionWindow.AllWindows)]
         protected internal override bool ProcessMnemonic(char charCode) {
             Debug.WriteLineIf(ControlKeyboardRouting.TraceVerbose, "In AxHost.ProcessMnemonic: " + (int)charCode);
             if (CanSelect) {
@@ -2274,9 +2266,6 @@ namespace System.Windows.Forms {
         ]
         public ContainerControl ContainingControl {
             get {
-                Debug.WriteLineIf(IntSecurity.SecurityDemand.TraceVerbose, "GetParent Demanded");
-                IntSecurity.GetParent.Demand();
-
                 if (containingControl == null) {
                     containingControl = FindContainerControlInternal();
                 }
@@ -3023,29 +3012,23 @@ namespace System.Windows.Forms {
             
             bool singleThreaded = true;
 
-            new RegistryPermission(PermissionState.Unrestricted).Assert();
             try {
-                try {
-                    using (RegistryKey rk = Registry.ClassesRoot.OpenSubKey("CLSID\\" + clsid.ToString() + "\\InprocServer32", /*writable*/false)) {
-                        object value = rk.GetValue("ThreadingModel");
+                using (RegistryKey rk = Registry.ClassesRoot.OpenSubKey("CLSID\\" + clsid.ToString() + "\\InprocServer32", /*writable*/false)) {
+                    object value = rk.GetValue("ThreadingModel");
 
-                        if (value != null && value is string) {
-                            if (value.Equals("Both") 
-                                || value.Equals("Apartment") 
-                                || value.Equals("Free")) {
+                    if (value != null && value is string) {
+                        if (value.Equals("Both") 
+                            || value.Equals("Apartment") 
+                            || value.Equals("Free")) {
 
-                                singleThreaded = false;
-                            }
+                            singleThreaded = false;
                         }
                     }
                 }
-                catch (Exception t) {
-                    Debug.Fail(t.ToString());
-                    throw new InvalidOperationException(SR.AXNoThreadInfo);
-                }
             }
-            finally {
-                System.Security.CodeAccessPermission.RevertAssert();
+            catch (Exception t) {
+                Debug.Fail(t.ToString());
+                throw new InvalidOperationException(SR.AXNoThreadInfo);
             }
 
             if (singleThreaded) {
@@ -3681,8 +3664,6 @@ namespace System.Windows.Forms {
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Name="FullTrust")]
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name="FullTrust")]
         public class ConnectionPointCookie {
             private UnsafeNativeMethods.IConnectionPoint connectionPoint;
             private int cookie;
@@ -3755,13 +3736,7 @@ namespace System.Windows.Forms {
                     }
                 }
 #if DEBUG
-                new EnvironmentPermission(PermissionState.Unrestricted).Assert();
-                try {
-                    callStack = Environment.StackTrace;
-                }
-                finally {
-                    System.Security.CodeAccessPermission.RevertAssert();
-                }
+                callStack = Environment.StackTrace;
 #endif
             }
 
@@ -3841,8 +3816,6 @@ namespace System.Windows.Forms {
         }
 
         /// <include file='doc\AxHost.uex' path='docs/doc[@for="InvalidActiveXStateException"]/*' />
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Name="FullTrust")]
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name="FullTrust")]
         public class InvalidActiveXStateException : Exception {
             private string name;
             private ActiveXInvokeKind kind;
@@ -4612,9 +4585,6 @@ namespace System.Windows.Forms {
         }
 
         private AxContainer GetParentContainer() {
-            Debug.WriteLineIf(IntSecurity.SecurityDemand.TraceVerbose, "GetParent Demanded");
-            IntSecurity.GetParent.Demand();
-
             if (container == null) {
                 container = AxContainer.FindContainerForControl(this);
             }
@@ -6467,8 +6437,6 @@ namespace System.Windows.Forms {
         ///      class through the TypeDescriptor.
         /// </devdoc>
         /// <internalonly/>
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Name="FullTrust")]
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name="FullTrust")]
         public class StateConverter : TypeConverter {
 
             /// <include file='doc\AxHost.uex' path='docs/doc[@for="AxHost.StateConverter.CanConvertFrom"]/*' />
@@ -6554,8 +6522,6 @@ namespace System.Windows.Forms {
             TypeConverterAttribute(typeof(TypeConverter)),
             Serializable
         ]
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Name="FullTrust")]
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name="FullTrust")]        
         [SuppressMessage("Microsoft.Usage", "CA2240:ImplementISerializableCorrectly")]        
         public class State : ISerializable {
             private int VERSION = 1;
@@ -6839,7 +6805,6 @@ namespace System.Windows.Forms {
             /// </devdoc>
             /// <internalonly/>
             void ISerializable.GetObjectData(SerializationInfo si, StreamingContext context) {
-                IntSecurity.UnmanagedCode.Demand();
                 MemoryStream stream = new MemoryStream();
                 Save(stream);
 
@@ -6913,8 +6878,6 @@ namespace System.Windows.Forms {
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Name="FullTrust")]
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name="FullTrust")]
         [ComVisible(false)]
         public class AxComponentEditor : WindowsFormsComponentEditor {
             /// <include file='doc\AxHost.uex' path='docs/doc[@for="AxHost.AxComponentEditor.EditComponent"]/*' />

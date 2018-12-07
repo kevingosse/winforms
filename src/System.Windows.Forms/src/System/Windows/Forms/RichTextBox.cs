@@ -16,8 +16,6 @@ namespace System.Windows.Forms {
     using System.Runtime.InteropServices;
     using System.Runtime.Remoting;
     using System.Runtime.Serialization.Formatters;
-    using System.Security;
-    using System.Security.Permissions;
     using System.Text;
     using System.Windows.Forms.ComponentModel;
     using System.Windows.Forms.Design;
@@ -163,16 +161,6 @@ namespace System.Windows.Forms {
                 return richTextBoxFlags[allowOleDropSection] != 0;
             }
             set {
-                if (value) {
-                    try
-                    {
-                        IntSecurity.ClipboardRead.Demand();
-                    }
-                    catch (Exception e)
-                    {
-                        throw new InvalidOperationException(SR.DragDropRegFailed, e);
-                    }
-                }
                 richTextBoxFlags[allowOleDropSection] = value ? 1 : 0;
                 UpdateOleCallback();
             }
@@ -353,7 +341,6 @@ namespace System.Windows.Forms {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         protected override CreateParams CreateParams {
-            [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
             get {
                 // Check for library
                 if (moduleHandle == IntPtr.Zero) {
@@ -374,14 +361,8 @@ namespace System.Windows.Forms {
 
                     StringBuilder pathBuilder = UnsafeNativeMethods.GetModuleFileNameLongPath(new HandleRef(null, moduleHandle));
                     string path = pathBuilder.ToString();
-                    new FileIOPermission(FileIOPermissionAccess.Read, path).Assert();
-                    FileVersionInfo versionInfo;
-                    try {
-                        versionInfo = FileVersionInfo.GetVersionInfo(path);
-                    }
-                    finally {
-                        CodeAccessPermission.RevertAssert();
-                    }
+                    FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(path);
+
                     Debug.Assert(versionInfo != null && !string.IsNullOrEmpty(versionInfo.ProductVersion), "Couldn't get the version info for the richedit dll");
                     if (versionInfo != null && !string.IsNullOrEmpty(versionInfo.ProductVersion)) {
                         //Note: this only allows for one digit version
@@ -480,17 +461,6 @@ namespace System.Windows.Forms {
             }
             set
             {
-                if (value)
-                {
-                    try
-                    {
-                        IntSecurity.ClipboardRead.Demand();
-                    }
-                    catch (Exception e)
-                    {
-                        throw new InvalidOperationException(SR.DragDropRegFailed, e);
-                    }
-                }
                 richTextBoxFlags[enableAutoDragDropSection] = value ? 1 : 0;
                 UpdateOleCallback();
             }
@@ -2696,9 +2666,6 @@ namespace System.Windows.Forms {
         ///     Pastes the contents of the clipboard in the given clipboard format.
         /// </devdoc>
         public void Paste(DataFormats.Format clipFormat) {
-            Debug.WriteLineIf(IntSecurity.SecurityDemand.TraceVerbose, "ClipboardRead Demanded");
-            IntSecurity.ClipboardRead.Demand();
-
             PasteUnsafe(clipFormat, 0);
         }
 
@@ -2718,7 +2685,6 @@ namespace System.Windows.Forms {
         }
 
         /// <include file='doc\RichTextBox.uex' path='docs/doc[@for="RichTextBox.ProcessCmdKey"]/*' />
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         protected override bool ProcessCmdKey(ref Message m, Keys keyData) {
             if (this.RichTextShortcutsEnabled == false) {
                 foreach (int shortcutValue in shortcutsToDisable) {
@@ -2930,7 +2896,6 @@ namespace System.Windows.Forms {
         /// This is just here as a minor perf improvement, so we don't have to call expensive RevertAssert.
         /// When the method exits, we effectively revert the assert.
         /// </devdoc>
-        [SecurityPermission(SecurityAction.Assert, Flags=SecurityPermissionFlag.UnmanagedCode)]
         [SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts")]
         static private void FontToLogFont(Font value, NativeMethods.LOGFONT logfont) {
             value.ToLogFont(logfont);
@@ -3250,20 +3215,8 @@ namespace System.Windows.Forms {
             if (IsHandleCreated) {
                 if (oleCallback == null) {
                     Debug.WriteLineIf(RichTextDbg.TraceVerbose, "binding ole callback");
-                    bool unrestricted = false;
-                    try {
-                        IntSecurity.UnmanagedCode.Demand();
-                        unrestricted = true;
-                    }
-                    catch (SecurityException) {
-                        unrestricted = false;
-                    }
-                    if (unrestricted) {
-                        this.AllowOleObjects = true;
-                    }
-                    else {
-                        this.AllowOleObjects = (0 != unchecked( (int) (long)SendMessage(RichTextBoxConstants.EM_SETQUERYRTFOBJ, 0, 1)));
-                    }
+
+                    this.AllowOleObjects = true;
 
                     oleCallback = CreateRichEditOleCallback();
 
@@ -3312,7 +3265,6 @@ namespace System.Windows.Forms {
         ///   information look up the MSDN info on this interface. This is designed to be a back door of 
         ///   sorts, which is why it is fairly obscure, and uses the RichEdit name instead of RichTextBox.
         /// </devdoc>
-        [SecurityPermission(SecurityAction.InheritanceDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         protected virtual object CreateRichEditOleCallback() {
             return new OleCallback(this);
         }
@@ -3662,7 +3614,6 @@ namespace System.Windows.Forms {
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         protected override void WndProc(ref Message m) {
             switch (m.Msg) {
                 case NativeMethods.WM_REFLECT + NativeMethods.WM_NOTIFY:
@@ -3811,43 +3762,7 @@ namespace System.Windows.Forms {
             {
                 Debug.WriteLineIf(RichTextDbg.TraceVerbose, "IRichEditOleCallback::QueryInsertObject(" + lpclsid.ToString() + ")");
 
-                try
-                {
-                    IntSecurity.UnmanagedCode.Demand();
-                    return NativeMethods.S_OK;
-                }
-                catch (SecurityException)
-                {
-                    // We do not have unmanaged code access, so
-                    // we need to restrict what we allow to be loaded
-                }
-                Guid realClsid = new Guid();
-                    
-                    
-                int hr = UnsafeNativeMethods.ReadClassStg(new HandleRef(null, lpstg), ref realClsid);
-                Debug.WriteLineIf(RichTextDbg.TraceVerbose, "real clsid:" + realClsid.ToString() + " (hr=" + hr.ToString("X", CultureInfo.InvariantCulture) + ")");
-                    
-                if (!NativeMethods.Succeeded(hr)) 
-                {
-                    return NativeMethods.S_FALSE;
-                }
-
-                if (realClsid == Guid.Empty) 
-                {
-                    realClsid = lpclsid;
-                }
-
-                switch (realClsid.ToString().ToUpper(CultureInfo.InvariantCulture)) 
-                {
-                    case "00000315-0000-0000-C000-000000000046": // Metafile
-                    case "00000316-0000-0000-C000-000000000046": // DIB
-                    case "00000319-0000-0000-C000-000000000046": // EMF
-                    case "0003000A-0000-0000-C000-000000000046": //BMP
-                        return NativeMethods.S_OK;
-                    default:
-                        Debug.WriteLineIf(RichTextDbg.TraceVerbose, "   denying '" + lpclsid.ToString() + "' from being inserted due to security restrictions");
-                        return NativeMethods.S_FALSE;
-                }
+                return NativeMethods.S_OK;
             }
 
             public int DeleteObject(IntPtr lpoleobj) {

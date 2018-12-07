@@ -8,7 +8,6 @@ namespace System.Windows.Forms {
     using System.Diagnostics;
     using System.Drawing.Imaging;
     using System;
-    using System.Security.Permissions;
     using System.Drawing.Drawing2D;
     using System.Drawing;
     using System.Drawing.Design;
@@ -193,7 +192,6 @@ namespace System.Windows.Forms {
 
         /// <include file='doc\ButtonBase.uex' path='docs/doc[@for="ButtonBase.CreateParams"]/*' />
         protected override CreateParams CreateParams {
-            [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
             get {
                 CreateParams cp = base.CreateParams;
                 if (!OwnerDraw) {
@@ -821,14 +819,7 @@ namespace System.Windows.Forms {
             SetFlag(FlagMouseOver, true);
             Invalidate();
             if (!DesignMode && AutoEllipsis && ShowToolTip && textToolTip != null) {
-                // 
-                IntSecurity.AllWindows.Assert();
-                try { 
-                    textToolTip.Show(WindowsFormsUtils.TextWithoutMnemonics(Text), this);
-                }
-                finally {
-                    System.Security.CodeAccessPermission.RevertAssert();
-                }
+                textToolTip.Show(WindowsFormsUtils.TextWithoutMnemonics(Text), this);
             }
             // call base last, so if it invokes any listeners that disable the button, we
             // don't have to recheck
@@ -845,14 +836,7 @@ namespace System.Windows.Forms {
         protected override void OnMouseLeave(EventArgs eventargs) {
             SetFlag(FlagMouseOver, false);    
             if (textToolTip != null) {
-                // 
-                IntSecurity.AllWindows.Assert();
-                try {
-                    textToolTip.Hide(this);
-                }
-                finally {
-                    System.Security.CodeAccessPermission.RevertAssert();
-                }
+                textToolTip.Hide(this);
             }
             Invalidate();
             // call base last, so if it invokes any listeners that disable the button, we
@@ -1261,7 +1245,6 @@ namespace System.Windows.Forms {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         protected override void WndProc(ref Message m) {
 
             switch (m.Msg) {
@@ -1340,7 +1323,6 @@ namespace System.Windows.Forms {
             }
 
             /// <include file='doc\ButtonBase.uex' path='docs/doc[@for="ButtonBaseAccessibleObject.DoDefaultAction"]/*' />
-            [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
             public override void DoDefaultAction() {
                 ((ButtonBase)Owner).OnClick(EventArgs.Empty);
             }

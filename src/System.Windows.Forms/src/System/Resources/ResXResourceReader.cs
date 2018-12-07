@@ -33,8 +33,6 @@ namespace System.Resources {
     /// <devdoc>
     ///     ResX resource reader.
     /// </devdoc>
-    [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Name="FullTrust")]
-    [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name="FullTrust")]
 #if SYSTEM_WEB
     internal class ResXResourceReader : IResourceReader {
 #else

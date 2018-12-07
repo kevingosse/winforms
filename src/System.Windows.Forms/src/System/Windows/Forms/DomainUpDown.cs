@@ -7,7 +7,6 @@ namespace System.Windows.Forms {
     using System.Diagnostics;
 
     using System;
-    using System.Security.Permissions;
     
     using System.Runtime.InteropServices;
     using System.ComponentModel;
@@ -826,7 +825,6 @@ namespace System.Windows.Forms {
             }
             
             public override AccessibleObject Parent {
-                [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
                 get {
                     return parent;
                 }
@@ -896,7 +894,6 @@ namespace System.Windows.Forms {
             ///    <para>[To be supplied.]</para>
             /// </devdoc>
             public override AccessibleObject Parent {
-                [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
                 get {
                     return parent;
                 }
@@ -927,7 +924,6 @@ namespace System.Windows.Forms {
             ///    <para>[To be supplied.]</para>
             /// </devdoc>
             public override string Value {
-                [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
                 get {
                     return name;
                 }

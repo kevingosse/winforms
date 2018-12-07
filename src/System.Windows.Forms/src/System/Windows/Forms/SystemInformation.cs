@@ -16,8 +16,6 @@ namespace System.Windows.Forms {
     using System;
     using Microsoft.Win32;
     using System.IO;
-    using System.Security;
-    using System.Security.Permissions;
     using System.Drawing;
     using System.ComponentModel;
     using System.Runtime.Versioning;
@@ -388,9 +386,6 @@ namespace System.Windows.Forms {
             }
 
             if (result && data.lfMenuFont != null) {
-                // 
-
-                IntSecurity.ObjectFromWin32Handle.Assert();
                 try {
                     menuFont = Font.FromLogFont(data.lfMenuFont);
                 }
@@ -398,9 +393,6 @@ namespace System.Windows.Forms {
                     // menu font is not true type.  Default to standard control font.
                     //
                     menuFont = Control.DefaultFont;
-                }
-                finally {
-                    CodeAccessPermission.RevertAssert();
                 }
             }
             return menuFont;
@@ -534,8 +526,6 @@ namespace System.Windows.Forms {
         /// </devdoc>
         public static bool DebugOS {
             get {
-                Debug.WriteLineIf(IntSecurity.SecurityDemand.TraceVerbose, "SensitiveSystemInformation Demanded");
-                IntSecurity.SensitiveSystemInformation.Demand();
                 return UnsafeNativeMethods.GetSystemMetrics(NativeMethods.SM_DEBUG) != 0;
             }
         }
@@ -709,8 +699,6 @@ namespace System.Windows.Forms {
         /// </devdoc>
         public static bool Secure {
             get {
-                Debug.WriteLineIf(IntSecurity.SecurityDemand.TraceVerbose, "SensitiveSystemInformation Demanded");
-                IntSecurity.SensitiveSystemInformation.Demand();
                 return UnsafeNativeMethods.GetSystemMetrics(NativeMethods.SM_SECURE) != 0;
             }
         }
@@ -898,8 +886,6 @@ namespace System.Windows.Forms {
         /// </devdoc>
         public static BootMode BootMode {
             get {
-                Debug.WriteLineIf(IntSecurity.SecurityDemand.TraceVerbose, "SensitiveSystemInformation Demanded");
-                IntSecurity.SensitiveSystemInformation.Demand();
                 return(BootMode) UnsafeNativeMethods.GetSystemMetrics(NativeMethods.SM_CLEANBOOT);
             }
         }
@@ -1093,9 +1079,6 @@ namespace System.Windows.Forms {
         /// </devdoc>
         public static string ComputerName {
             get {
-                Debug.WriteLineIf(IntSecurity.SecurityDemand.TraceVerbose, "SensitiveSystemInformation Demanded");
-                IntSecurity.SensitiveSystemInformation.Demand();
-
                 StringBuilder sb = new StringBuilder(256);
                 UnsafeNativeMethods.GetComputerName(sb, new int[] {sb.Capacity});
                 return sb.ToString();
@@ -1156,9 +1139,6 @@ namespace System.Windows.Forms {
         /// </devdoc>
         public static string UserName {
             get {
-                Debug.WriteLineIf(IntSecurity.SecurityDemand.TraceVerbose, "SensitiveSystemInformation Demanded");
-                IntSecurity.SensitiveSystemInformation.Demand();
-
                 StringBuilder sb = new StringBuilder(256);
                 UnsafeNativeMethods.GetUserName(sb, new int[] {sb.Capacity});
                 return sb.ToString();

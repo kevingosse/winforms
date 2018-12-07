@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 namespace System.Windows.Forms{
-    using System.Security.Permissions;
     using System.Runtime.Remoting;
     using System.ComponentModel;
     using System;
@@ -1259,7 +1258,6 @@ namespace System.Windows.Forms{
             ///    <para>[To be supplied.]</para>
             /// </devdoc>
             public override AccessibleObject Parent {
-                [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
                 get {
                     return DataGrid.AccessibilityObject;
                 }
@@ -1285,7 +1283,6 @@ namespace System.Windows.Forms{
             /// <devdoc>
             ///    <para>[To be supplied.]</para>
             /// </devdoc>
-            [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
             public override AccessibleObject Navigate(AccessibleNavigation navdir) {
                 switch (navdir) {
                     case AccessibleNavigation.Right:

@@ -12,7 +12,6 @@ namespace System.Windows.Forms {
     using System.Windows.Forms;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
-    using System.Security.Permissions;
     using System.Threading;
     using System.Windows.Forms.Layout;
     using System.ComponentModel.Design.Serialization;
@@ -2814,7 +2813,6 @@ namespace System.Windows.Forms {
         /// </devdoc>
         /// <param name=m></param>
         /// <param name=keyData></param>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         protected override bool ProcessCmdKey(ref Message m, Keys keyData) {
 
             if (ToolStripManager.IsMenuKey(keyData)) {
@@ -2876,7 +2874,6 @@ namespace System.Windows.Forms {
         /// on the form. For the arrow keys,
         /// !!!
         /// </devdoc>
-        [UIPermission(SecurityAction.LinkDemand, Window=UIPermissionWindow.AllWindows)]
         protected override bool ProcessDialogKey(Keys keyData) {
             bool retVal = false;
 
@@ -2965,7 +2962,6 @@ namespace System.Windows.Forms {
         ///    Else 
         ///    change the selection from the current selected item to the first item that matched.
         /// </devdoc>
-        [UIPermission(SecurityAction.LinkDemand, Window=UIPermissionWindow.AllWindows)]
         protected internal override bool ProcessMnemonic(char charCode) {
             // menus and toolbars only take focus on ALT
             if (!CanProcessMnemonic()) {
@@ -4496,14 +4492,7 @@ namespace System.Windows.Forms {
 
                 if (item != currentlyActiveTooltipItem && ToolTip != null) {
 
-                    // 
-                    IntSecurity.AllWindows.Assert();
-                    try {
-                        ToolTip.Hide(this);
-                    }
-                    finally {
-                         System.Security.CodeAccessPermission.RevertAssert();
-                    }
+                    ToolTip.Hide(this);
 
                     if (AccessibilityImprovements.UseLegacyToolTipDisplay) {
                         ToolTip.Active = false;
@@ -4525,17 +4514,10 @@ namespace System.Windows.Forms {
 
                             cursorLocation = WindowsFormsUtils.ConstrainToScreenBounds(new Rectangle(cursorLocation, onePixel)).Location;
 
-                            // 
-                            IntSecurity.AllWindows.Assert();
-                            try {                                           
-                                ToolTip.Show(currentlyActiveTooltipItem.ToolTipText,
-                                         this,
-                                         PointToClient(cursorLocation),
-                                         ToolTip.AutoPopDelay);                           
-                            }
-                            finally {
-                                System.Security.CodeAccessPermission.RevertAssert();
-                            }
+                            ToolTip.Show(currentlyActiveTooltipItem.ToolTipText,
+                                        this,
+                                        PointToClient(cursorLocation),
+                                        ToolTip.AutoPopDelay);                           
                         }
                     }
                 }
@@ -4610,7 +4592,6 @@ namespace System.Windows.Forms {
         /// Summary of WndProc.
         /// </devdoc>
         /// <param name=m></param>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         protected override void WndProc(ref Message m) {
 
             if (m.Msg == NativeMethods.WM_SETFOCUS) {

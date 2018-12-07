@@ -16,8 +16,6 @@ namespace System.Windows.Forms {
     using System.Windows.Forms.Layout;
     using System.Drawing;
     using Microsoft.Win32;
-    using System.Security;
-    using System.Security.Permissions;
     using System.Drawing.Text;
     using System.Drawing.Imaging;
     using System.Drawing.Drawing2D;
@@ -186,7 +184,6 @@ namespace System.Windows.Forms {
         ///     From MSDN: 
         ///       This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
         /// </devdoc>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static IntPtr CreateHBitmap16Bit(Bitmap bitmap, Color background) {
@@ -243,7 +240,6 @@ namespace System.Windows.Forms {
         ///     From MSDN:
         ///         This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
         /// </devdoc>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static IntPtr CreateHBitmapTransparencyMask(Bitmap bitmap) {
@@ -296,7 +292,6 @@ namespace System.Windows.Forms {
         ///     From MSDN:
         ///       This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
         /// </devdoc>
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static IntPtr CreateHBitmapColorMask(Bitmap bitmap, IntPtr monochromeMask) {
@@ -1765,7 +1760,6 @@ namespace System.Windows.Forms {
         ///      inverting a region of the screen except that it behaves better for
         ///      a wider variety of colors.
         /// </devdoc>
-        [UIPermission(SecurityAction.LinkDemand, Window=UIPermissionWindow.AllWindows)]
         public static void DrawReversibleFrame(Rectangle rectangle, Color backColor, FrameStyle style) {
             int rop2;
             Color graphicsColor;
@@ -1816,7 +1810,6 @@ namespace System.Windows.Forms {
         ///      Draws a reversible line on the screen.  A reversible line can
         ///      be erased by just drawing over it again.
         /// </devdoc>
-        [UIPermission(SecurityAction.LinkDemand, Window=UIPermissionWindow.AllWindows)]
         public static void DrawReversibleLine(Point start, Point end, Color backColor) {
             int rop2 = GetColorRop(backColor, 
                                    0xA, // RasterOp.PEN.Invert().XorWith(RasterOp.TARGET), 
@@ -1994,7 +1987,6 @@ namespace System.Windows.Forms {
         ///      inverting a region of the screen except that it behaves better for
         ///      a wider variety of colors.
         /// </devdoc>
-        [UIPermission(SecurityAction.LinkDemand, Window=UIPermissionWindow.AllWindows)]
         public static void FillReversibleRectangle(Rectangle rectangle, Color backColor) {
             int rop3 = GetColorRop(backColor, 
                                    0xa50065, // RasterOp.BRUSH.Invert().XorWith(RasterOp.TARGET), 
@@ -2065,13 +2057,7 @@ namespace System.Windows.Forms {
 
             NativeMethods.LOGFONT logfont = new NativeMethods.LOGFONT();
 
-            IntSecurity.ObjectFromWin32Handle.Assert();
-            try {
-                source.ToLogFont(logfont);
-            }
-            finally {
-                CodeAccessPermission.RevertAssert();
-            }
+            source.ToLogFont(logfont);
 
             short fontWeight = target.GetWeight();
             if (fontWeight != logfont.lfWeight) {

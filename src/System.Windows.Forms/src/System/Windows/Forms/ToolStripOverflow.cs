@@ -10,8 +10,6 @@ namespace System.Windows.Forms {
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows.Forms.Layout;
-    using System.Security;
-    using System.Security.Permissions;
     using System.Runtime.InteropServices;
     
 

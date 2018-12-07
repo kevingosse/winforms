@@ -7,7 +7,6 @@ namespace System.Windows.Forms {
     using System.Diagnostics;
     using System;
     using System.Security;
-    using System.Security.Permissions;
 
     /// <include file='doc\OSFeature.uex' path='docs/doc[@for="OSFeature"]/*' />
     /// <devdoc>

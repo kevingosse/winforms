@@ -10,8 +10,6 @@ using System.IO;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Windows.Forms;
-using System.Security.Permissions;
-using System.Security;
 using System.Runtime.InteropServices;
 using System.Net;
 using System.Globalization;
@@ -21,13 +19,11 @@ namespace System.Windows.Forms {
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
     /// </devdoc>
-    [PermissionSetAttribute(SecurityAction.LinkDemand, Name = "FullTrust")]
     public sealed class HtmlHistory : IDisposable
     {
         private UnsafeNativeMethods.IOmHistory htmlHistory;
         private bool disposed;
 
-        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         internal HtmlHistory(UnsafeNativeMethods.IOmHistory history)
         {
             this.htmlHistory = history;

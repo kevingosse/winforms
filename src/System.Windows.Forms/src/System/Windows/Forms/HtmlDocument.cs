@@ -13,7 +13,6 @@ using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Security.Permissions;
 
 
 namespace System.Windows.Forms
@@ -22,7 +21,6 @@ namespace System.Windows.Forms
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
     /// </devdoc>
-    [PermissionSetAttribute(SecurityAction.LinkDemand, Name = "FullTrust")]
     public sealed class HtmlDocument
     {
         internal static object EventClick = new object();
@@ -39,7 +37,6 @@ namespace System.Windows.Forms
         private UnsafeNativeMethods.IHTMLDocument2 htmlDocument2;
         private HtmlShimManager shimManager;
 
-        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         internal HtmlDocument(HtmlShimManager shimManager, UnsafeNativeMethods.IHTMLDocument doc)
         {
             this.htmlDocument2 = (UnsafeNativeMethods.IHTMLDocument2)doc;

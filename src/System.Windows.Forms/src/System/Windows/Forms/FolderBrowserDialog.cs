@@ -14,7 +14,6 @@ namespace System.Windows.Forms
     using System.Drawing.Design;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
-    using System.Security.Permissions;
     using System.Diagnostics.CodeAnalysis;
     
     /// <include file='doc\FolderBrowserDialog.uex' path='docs/doc[@for="FolderBrowserDialog"]/*' />

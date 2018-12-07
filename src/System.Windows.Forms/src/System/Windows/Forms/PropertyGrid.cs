@@ -16,7 +16,6 @@ namespace System.Windows.Forms {
     using System.IO;
     using System.Reflection;
     using System.Runtime.InteropServices;
-    using System.Security.Permissions;
     using System.Windows.Forms.ComponentModel.Com2Interop;
     using System.Windows.Forms.Design;
     using System.Windows.Forms.PropertyGridInternal;
@@ -29,8 +28,6 @@ namespace System.Windows.Forms {
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDispatch)]
     [Designer("System.Windows.Forms.Design.PropertyGridDesigner, " + AssemblyRef.SystemDesign)]
-    [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Name="FullTrust")]
-    [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name="FullTrust")]
     [SRDescription(nameof(SR.DescriptionPropertyGrid))]
     public class PropertyGrid : ContainerControl, IComPropertyBrowser, UnsafeNativeMethods.IPropertyNotifySink {
 
@@ -3622,9 +3619,6 @@ namespace System.Windows.Forms {
         /// <devdoc>
         /// Returns the last child control that can take focus
         /// </devdoc>
-        [UIPermission(SecurityAction.LinkDemand, Window=UIPermissionWindow.AllWindows)]
-        [PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
-        [PermissionSet(SecurityAction.InheritanceDemand, Name = "FullTrust")]
         protected override bool ProcessDialogKey(Keys keyData)
         {
             switch (keyData & Keys.KeyCode) {
@@ -4745,7 +4739,6 @@ namespace System.Windows.Forms {
 
 
         [SuppressMessage("Microsoft.Security", "CA2114:MethodSecurityShouldBeASupersetOfType")]
-        [SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         protected override void WndProc(ref Message m) {
 
             switch (m.Msg) {
@@ -4953,8 +4946,6 @@ namespace System.Windows.Forms {
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.InheritanceDemand, Name="FullTrust")]
-        [System.Security.Permissions.PermissionSetAttribute(System.Security.Permissions.SecurityAction.LinkDemand, Name="FullTrust")]
         public class PropertyTabCollection : ICollection {
         
             /// <devdoc>
